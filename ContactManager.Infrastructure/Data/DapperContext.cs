@@ -17,7 +17,6 @@ public class DapperContext
 	public DapperContext(IConfiguration configuration)
 	{
 		_configuration = configuration;
-		// Беремо рядок підключення з налаштувань (ми його додамо в наступних етапах)
 		_connectionString = _configuration.GetConnectionString("DefaultConnection")
 							?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 	}
