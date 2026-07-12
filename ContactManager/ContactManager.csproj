@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContactManager.Core\ContactManager.Core.csproj" />
+    <ProjectReference Include="..\ContactManager.Infrastructure\ContactManager.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
