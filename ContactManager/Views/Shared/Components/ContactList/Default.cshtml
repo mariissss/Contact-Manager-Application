@@ -1,0 +1,72 @@
+﻿@model ContactManager.Models.ContactListViewModel
+
+<div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle" id="contactsTable">
+        <thead class="table-dark">
+            <tr>
+                <th class="cursor-pointer" onclick="sortTable('Name')">
+                    Name <span class="sort-icon" id="sort-Name"></span>
+                </th>
+                <th class="cursor-pointer" onclick="sortTable('DateOfBirth')">
+                    Date of Birth <span class="sort-icon" id="sort-DateOfBirth"></span>
+                </th>
+                <th class="cursor-pointer" onclick="sortTable('Married')">
+                    Married <span class="sort-icon" id="sort-Married"></span>
+                </th>
+                <th class="cursor-pointer" onclick="sortTable('Phone')">
+                    Phone <span class="sort-icon" id="sort-Phone"></span>
+                </th>
+                <th class="cursor-pointer" onclick="sortTable('Salary')">
+                    Salary ($) <span class="sort-icon" id="sort-Salary"></span>
+                </th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Contacts.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No contacts found. Please upload a CSV file or change filter criteria.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var contact in Model.Contacts)
+                {
+                    <tr data-id="@contact.Id">
+                        <td class="editable" data-field="Name">@contact.Name</td>
+                        <td class="editable" data-field="DateOfBirth">@contact.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                        <td class="editable text-center" data-field="Married" data-val="@contact.Married.ToString().ToLower()">
+                            <input type="checkbox" class="form-check-input" @(contact.Married ? "checked" : "") disabled />
+                        </td>
+                        <td class="editable" data-field="Phone">@contact.Phone</td>
+                        <td class="editable" data-field="Salary">@contact.Salary.ToString("F2")</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary btn-edit" onclick="enableEdit(@contact.Id)">Edit</button>
+                            <button class="btn btn-sm btn-success btn-save d-none" onclick="saveEdit(@contact.Id)">Save</button>
+                            <button class="btn btn-sm btn-secondary btn-cancel d-none" onclick="cancelEdit(@contact.Id)">Cancel</button>
+                            <button class="btn btn-sm btn-outline-danger btn-delete" onclick="deleteContact(@contact.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- пагінація-->
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <button class="page-link" onclick="loadPage(@i)">@i</button>
+                </li>
+            }
+        </ul>
+    </nav>
+}

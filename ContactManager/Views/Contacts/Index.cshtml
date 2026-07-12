@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Contacts Directory";
+}
+
+<div class="row mb-4 mt-2">
+    <div class="col-md-6">
+        <h2>Contact Manager</h2>
+        <p class="text-muted">Upload CSV, filter, sort, and edit inline.</p>
+    </div>
+
+    <!-- download CSV -->
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form asp-controller="Contacts" asp-action="UploadCsv" method="post" enctype="multipart/form-data" class="d-flex gap-2">
+                    <input type="file" name="file" class="form-control" accept=".csv" required />
+                    <button type="submit" class="btn btn-primary text-nowrap">Upload CSV</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- search -->
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by name or phone..." />
+            <button class="btn btn-outline-secondary" type="button" onclick="triggerSearch()">Search</button>
+        </div>
+    </div>
+</div>
+
+<div id="tableContainer" class="position-relative">
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
