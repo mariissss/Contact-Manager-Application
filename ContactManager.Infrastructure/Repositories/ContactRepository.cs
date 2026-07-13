@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Data;
 using ContactManager.Core.Entities;
 using ContactManager.Core.Interfaces;
 using ContactManager.Infrastructure.Data;
 using Dapper;
+
 namespace ContactManager.Infrastructure.Repositories;
 
 public class ContactRepository : IContactRepository
@@ -19,16 +21,30 @@ public class ContactRepository : IContactRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Contact>> GetContactsAsync(string? searchTerm, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+    public async Task<IEnumerable<Contact>> GetContactsAsync(
+        int csvFileId, string? searchTerm, bool? isMarried, decimal? minSalary, decimal? maxSalary,
+        DateTime? minDob, DateTime? maxDob, string? sortBy, bool isAscending, int pageNumber, int pageSize)
     {
         using var connection = _context.CreateConnection();
-
-        var sql = "SELECT * FROM Contacts WHERE 1=1 ";
+        var sql = "SELECT * FROM Contacts WHERE CsvFileId = @CsvFileId ";
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
             sql += " AND (Name LIKE @SearchTerm OR Phone LIKE @SearchTerm) ";
-        }
+
+        if (isMarried.HasValue)
+            sql += " AND Married = @IsMarried ";
+
+        if (minSalary.HasValue)
+            sql += " AND Salary >= @MinSalary ";
+
+        if (maxSalary.HasValue)
+            sql += " AND Salary <= @MaxSalary ";
+
+        if (minDob.HasValue)
+            sql += " AND DateOfBirth >= @MinDob ";
+
+        if (maxDob.HasValue)
+            sql += " AND DateOfBirth <= @MaxDob ";
 
         var validColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             { "Name", "DateOfBirth", "Married", "Phone", "Salary" };
@@ -43,25 +59,53 @@ public class ContactRepository : IContactRepository
 
         return await connection.QueryAsync<Contact>(sql, new
         {
+            CsvFileId = csvFileId,
             SearchTerm = $"%{searchTerm}%",
+            IsMarried = isMarried,
+            MinSalary = minSalary,
+            MaxSalary = maxSalary,
+            MinDob = minDob,
+            MaxDob = maxDob,
             Offset = offset,
             PageSize = pageSize
         });
     }
 
-    public async Task<int> GetTotalCountAsync(string? searchTerm)
+    public async Task<int> GetTotalCountAsync(
+        int csvFileId, string? searchTerm, bool? isMarried, decimal? minSalary, decimal? maxSalary, DateTime? minDob, DateTime? maxDob)
     {
         using var connection = _context.CreateConnection();
-        var sql = "SELECT COUNT(*) FROM Contacts WHERE 1=1 ";
+        var sql = "SELECT COUNT(*) FROM Contacts WHERE CsvFileId = @CsvFileId ";
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
             sql += " AND (Name LIKE @SearchTerm OR Phone LIKE @SearchTerm) ";
-        }
 
-        return await connection.ExecuteScalarAsync<int>(sql, new { SearchTerm = $"%{searchTerm}%" });
+        if (isMarried.HasValue)
+            sql += " AND Married = @IsMarried ";
+
+        if (minSalary.HasValue)
+            sql += " AND Salary >= @MinSalary ";
+
+        if (maxSalary.HasValue)
+            sql += " AND Salary <= @MaxSalary ";
+
+        if (minDob.HasValue)
+            sql += " AND DateOfBirth >= @MinDob ";
+
+        if (maxDob.HasValue)
+            sql += " AND DateOfBirth <= @MaxDob ";
+
+        return await connection.ExecuteScalarAsync<int>(sql, new
+        {
+            CsvFileId = csvFileId,
+            SearchTerm = $"%{searchTerm}%",
+            IsMarried = isMarried,
+            MinSalary = minSalary,
+            MaxSalary = maxSalary,
+            MinDob = minDob,
+            MaxDob = maxDob
+        });
     }
-
     public async Task<Contact?> GetByIdAsync(int id)
     {
         using var connection = _context.CreateConnection();
@@ -72,8 +116,8 @@ public class ContactRepository : IContactRepository
     public async Task<int> AddRangeAsync(IEnumerable<Contact> contacts)
     {
         using var connection = _context.CreateConnection();
-        var sql = @"INSERT INTO Contacts (Name, DateOfBirth, Married, Phone, Salary) 
-                    VALUES (@Name, @DateOfBirth, @Married, @Phone, @Salary);";
+        var sql = @"INSERT INTO Contacts (CsvFileId, Name, DateOfBirth, Married, Phone, Salary) 
+                    VALUES (@CsvFileId, @Name, @DateOfBirth, @Married, @Phone, @Salary);";
 
         return await connection.ExecuteAsync(sql, contacts);
     }

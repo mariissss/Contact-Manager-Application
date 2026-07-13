@@ -9,6 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<ICsvService, CsvService>();
+builder.Services.AddScoped<ICsvFileRepository, CsvFileRepository>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

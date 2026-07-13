@@ -3,6 +3,7 @@ namespace ContactManager.Models;
 
 public class ContactListViewModel
 {
+    public int FileId { get; set; } 
     public IEnumerable<Contact> Contacts { get; set; } = new List<Contact>();
     public int CurrentPage { get; set; }
     public int TotalPages { get; set; }

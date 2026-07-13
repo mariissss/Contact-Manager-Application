@@ -9,17 +9,32 @@ namespace ContactManager.Core.Interfaces
 {
     public interface IContactRepository
     {
-        Task<IEnumerable<Contact>> GetContactsAsync(string? searchTerm, string? sortBy, bool isAscending, int pageNumber, int pageSize);
+        Task<IEnumerable<Contact>> GetContactsAsync(
+        int csvFileId,
+        string? searchTerm,
+        bool? isMarried,
+        decimal? minSalary,
+        decimal? maxSalary,
+        DateTime? minDob,
+        DateTime? maxDob,
+        string? sortBy,
+        bool isAscending,
+        int pageNumber,
+        int pageSize);
 
-        Task<int> GetTotalCountAsync(string? searchTerm);
+        Task<int> GetTotalCountAsync(
+            int csvFileId,
+            string? searchTerm,
+            bool? isMarried,
+            decimal? minSalary,
+            decimal? maxSalary,
+            DateTime? minDob,
+            DateTime? maxDob);
 
         Task<Contact?> GetByIdAsync(int id);
-
-        // велике додавання з CSV 
         Task<int> AddRangeAsync(IEnumerable<Contact> contacts);
-
         Task<bool> UpdateAsync(Contact contact);
-
         Task<bool> DeleteAsync(int id);
+
     }
 }

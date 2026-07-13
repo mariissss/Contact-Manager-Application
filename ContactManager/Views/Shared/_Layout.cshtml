@@ -7,15 +7,24 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
-        .cursor-pointer { cursor: pointer; }
-        .sort-icon { font-size: 0.8em; margin-left: 5px; }
-        .editing-row { background-color: #fff3cd !important; }
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .sort-icon {
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .editing-row {
+            background-color: #fff3cd !important;
+        }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <partial name="_Header" />
 
-    <div class="container">
+    <div class="container flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

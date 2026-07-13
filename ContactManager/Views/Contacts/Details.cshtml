@@ -1,0 +1,111 @@
+﻿@{
+    ViewData["Title"] = ViewBag.FileName;
+}
+
+<input type="hidden" id="currentFileId" value="@ViewBag.FileId" />
+
+<div class="d-flex justify-content-between align-items-center mb-3 mt-3 flex-wrap gap-3">
+    <div>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm mb-2">&larr; Back to Files Directory</a>
+        <h2 class="fw-bold mb-0"> @ViewBag.FileName</h2>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+        <button type="button" class="btn btn-primary shadow-sm fw-bold" data-bs-toggle="modal" data-bs-target="#addContactModal">
+            Add Contact
+        </button>
+
+        <a asp-action="DownloadCsv" asp-route-id="@ViewBag.FileId" class="btn btn-success shadow-sm fw-bold">
+            Download CSV
+        </a>
+
+        <div class="input-group shadow-sm" style="min-width: 250px; width: auto;">
+            <span class="input-group-text bg-white border-end-0"></span>
+            <input type="text" id="searchInput" class="form-control border-start-0"
+                   placeholder="Search Name or Phone..." autocomplete="off" />
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card-body p-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label small fw-bold mb-1">Married Status</label>
+                <select id="filter-Married" class="form-select form-select-sm filter-input">
+                    <option value="">All</option>
+                    <option value="true">Married</option>
+                    <option value="false">Single</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold mb-1">Min Salary ($)</label>
+                <input type="number" id="filter-MinSalary" class="form-control form-control-sm filter-input" placeholder="e.g. 1000" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold mb-1">Max Salary ($)</label>
+                <input type="number" id="filter-MaxSalary" class="form-control form-control-sm filter-input" placeholder="e.g. 10000" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold mb-1">Born From</label>
+                <input type="date" id="filter-MinDob" class="form-control form-control-sm filter-input" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold mb-1">Born To</label>
+                <input type="date" id="filter-MaxDob" class="form-control form-control-sm filter-input" />
+            </div>
+            <div class="col-md-2 d-flex gap-1">
+                <button type="button" class="btn btn-sm btn-outline-danger w-100 fw-bold" onclick="resetFilters()">
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tableContainer" class="card shadow-sm border-0 p-3">
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addContactModal" tabindex="-1" aria-labelledby="addContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="addContactModalLabel">Add New Contact</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="addContactForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Name <span class="text-danger">*</span></label>
+                        <input type="text" id="new-Name" class="form-control" placeholder="e.g. Alex Turner" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Date of Birth <span class="text-danger">*</span></label>
+                        <input type="date" id="new-DateOfBirth" class="form-control" required />
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" id="new-Married" class="form-check-input" />
+                        <label class="form-check-label fw-bold cursor-pointer" for="new-Married">Married status</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Phone <span class="text-danger">*</span></label>
+                        <input type="text" id="new-Phone" class="form-control" placeholder="e.g. +1 (555) 010-2030" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Salary ($) <span class="text-danger">*</span></label>
+                        <input type="number" id="new-Salary" class="form-control" step="0.01" min="0" placeholder="0.00" required />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary fw-bold px-4" onclick="createContact()">Save Contact</button>
+            </div>
+        </div>
+    </div>
+</div>
